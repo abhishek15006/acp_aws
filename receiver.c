@@ -16,25 +16,32 @@ unsigned char *package(unsigned int seq);
 unsigned int unpack(unsigned char buffer[]);
 
 unsigned char *package(unsigned int seq){
-    unsigned char *data = (unsigned char *)malloc(1024*sizeof(unsigned char));
+    unsigned char *data = (char *)malloc(1024*sizeof(unsigned char));
 
-    unsigned int n1 = seq>>8;
-    unsigned int n2 = seq & 0xff;
+    unsigned int n1 = seq>>24;
+    unsigned int n2 = (seq>>16) & 0xff;
+    unsigned int n3 = (seq>>8) & 0xff;
+    unsigned int n4 = seq & 0xff;
+
 
     data[0] = (unsigned char)n1;
     data[1] = (unsigned char)n2;
+    data[2] = (unsigned char)n3;
+    data[3] = (unsigned char)n4;
 
     return data;
 }
 
 unsigned int unpack(unsigned char buffer[]){
+    unsigned int l1,l2,l3,l4;
 
-    unsigned int high = (unsigned int)buffer[0];
-    unsigned int low = (unsigned int)buffer[1];
-    unsigned int sq = (high<<8) + low;
+    l1 = (unsigned int)buffer[0];
+    l2 = (unsigned int)buffer[1];
+    l3 = (unsigned int)buffer[2];
+    l4 = (unsigned int)buffer[3];
 
-    //printf("%x %x %x %x %u\n",buffer[0],buffer[1],buffer[2],buffer[3],sq);
-    //printf("high=%u low=%u sq=%u\n",high,low,sq);
+    unsigned int sq = (l1<<24) + (l2<<16) + (l3<<8) + l4;
+
     return sq;
 }
 
